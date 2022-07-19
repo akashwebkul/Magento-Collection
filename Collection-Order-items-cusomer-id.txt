@@ -1,0 +1,32 @@
+Collection class
+Magento\Sales\Model\ResourceModel\Order\CollectionFactoryInterface
+
+----Collection-----
+
+
+$this->CollectionFactoryInterfaceFactory()->create($customerId)
+->addFieldToSelect(null)->removeFieldFromSelect(null);
+$this->orders->getSelect()->columns(
+    [
+        'product_id' => 'soi.product_id',
+        'name' => 'soi.name',
+        'qty' => new \Zend_Db_Expr('SUM(soi.qty_ordered)'),
+        'orders_no' => new \Zend_Db_Expr('COUNT("sales_order.entity_id")'),
+        'type' => 'soi.product_type'
+    ]
+);
+$this->orders->getSelect()->joinLeft(
+    "sales_order_item as soi",
+    "main_table.entity_id = soi.order_id",
+    []
+);
+$this->orders->getSelect()->where(
+    " and main_table.customer_id = ".$customerId
+);
+$this->orders->getSelect()->group("soi.product_id");
+$this->orders->getSelect()->group("soi.name");
+$this->orders->getSelect()->group("soi.product_type");
+
+
+
+above collection gives the list of the unique list of product cusomer buy till date
